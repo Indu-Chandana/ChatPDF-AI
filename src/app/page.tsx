@@ -1,5 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { UserButton, auth } from "@clerk/nextjs";
+import Link from "next/dist/client/link";
+import { LogIn } from 'lucide-react'
 
 export default async function Home() { //async will make sure that it's a server component.
   // This entire code block is going to run once on the server to generate the HTML code.
@@ -18,7 +20,21 @@ export default async function Home() { //async will make sure that it's a server
           </div>
 
           <div className="flex mt-2">
-            <Button>Go to Chats</Button>
+            {isAuth && <Button>Go to Chats</Button>}
+          </div>
+          <p className="max-w-xl mt-1 text-lg text-slate-600">Join millions of students, researchers and professionals to instantly answer questions and understand reasearch with AI</p>
+
+          <div className="w-full mt-4">
+            {isAuth ? (
+              <h1>fileupload</h1>
+            ) : (
+              <Link href="/sign-in">
+                <Button>Login to get Started!
+                  {/* add icon lucide */}
+                  <LogIn className="w-4 h-4 ml-2" />
+                </Button>
+              </Link>
+            )}
           </div>
         </div>
       </div>
