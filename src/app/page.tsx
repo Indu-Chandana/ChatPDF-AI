@@ -1,15 +1,16 @@
 import { Button } from "@/components/ui/button";
-import { UserButton, auth } from "@clerk/nextjs";
+import { UserButton, auth, useAuth } from "@clerk/nextjs";
 import Link from "next/dist/client/link";
 import { LogIn } from 'lucide-react'
+import FileUpload from "@/components/FileUpload";
 
 export default async function Home() { //async will make sure that it's a server component.
   // This entire code block is going to run once on the server to generate the HTML code.
   // Then this HTML code is going to be directly sent back to the client for it to be rendered.
 
-  const { userId } = await auth()
+  const { userId, user, getToken, sessionId, } = await auth();
   const isAuth = !!userId; // Good practice null | string convert into boolean
-
+  console.log('isAuth', isAuth, userId, user, getToken, sessionId,)
   return (
     <div className="w-screen min-h-screen bg-gradient-to-r from-rose-100 to-teal-100">
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
@@ -26,7 +27,7 @@ export default async function Home() { //async will make sure that it's a server
 
           <div className="w-full mt-4">
             {isAuth ? (
-              <h1>fileupload</h1>
+              <FileUpload />
             ) : (
               <Link href="/sign-in">
                 <Button>Login to get Started!
