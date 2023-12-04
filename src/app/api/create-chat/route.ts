@@ -8,6 +8,8 @@ export async function POST(req: Request, res: Response) {
         const { file_key, file_name } = body
 
         console.log('function POST', file_key, file_name)
+
+        return NextResponse.json({ message: "success" })
     } catch (error) {
         console.error(error)
         return NextResponse.json(

@@ -1,7 +1,7 @@
 'use client'
 import { uploadToS3 } from '@/lib/s3';
-import { Inbox } from 'lucide-react';
-import React from 'react'
+import { Inbox, Loader2 } from 'lucide-react';
+import React, { useState } from 'react'
 
 import { useDropzone } from "react-dropzone"
 import { useMutation } from "@tanstack/react-query"
@@ -11,7 +11,9 @@ import toast from 'react-hot-toast/headless';
 // snippet -> tsrafce
 const FileUpload = () => {
 
-    const { mutate } = useMutation({
+    const [uploading, setUploarding] = useState(false);
+
+    const { mutate, isPending } = useMutation({
         mutationFn: async ({
             file_key,
             file_name
@@ -45,6 +47,9 @@ const FileUpload = () => {
             }
 
             try {
+
+                setUploarding(true)
+
                 const data = await uploadToS3(file)
 
                 if (!data?.file_key || !data.file_name) {
@@ -55,6 +60,7 @@ const FileUpload = () => {
                 mutate(data, {
                     onSuccess: (data) => {
                         console.log(data)
+                        toast.success(data.message)
                     },
                     onError: (err) => {
                         toast.error("Error creating chat")
@@ -64,6 +70,8 @@ const FileUpload = () => {
 
             } catch (error) {
                 console.log(error)
+            } finally {
+                setUploarding(false)
             }
 
         }
@@ -76,12 +84,23 @@ const FileUpload = () => {
             })}>
                 <input {...getInputProps()} />
 
-                <>
-                    <Inbox className='w-10 h-10 text-blue-500' />
-                    <p className='mt-2 text-sm text-slate-400'>Drop PDF Here</p>
-                </>
+                {(uploading || isPending) ? (
+                    <>
+                        {/* loading state */}
+                        <Loader2 className='h-10 w-10 text-blue-500 animate-spin' />
+                        <p className='mt-2 text-sm text-slate-400'>
+                            Spilling Tea to GPT...
+                        </p>
+                    </>
+                ) : (
+                    <>
+                        <Inbox className='w-10 h-10 text-blue-500' />
+                        <p className='mt-2 text-sm text-slate-400'>Drop PDF Here</p>
+                    </>
+
+                )}
             </div>
-        </div>
+        </div >
     )
 }
 
