@@ -4,6 +4,10 @@ import { downloadFromS3 } from "./s3-server"
 // this PDF loader will be able to read from the file system and give us the text of that PDF file.
 import { PDFLoader } from 'langchain/document_loaders/fs/pdf'
 import { Document, RecursiveCharacterTextSplitter } from '@pinecone-database/doc-splitter'
+import md5 from 'md5'
+
+import { getEmbeddings } from "./embeddings"
+
 
 let pinecone: Pinecone | null = null
 
@@ -52,6 +56,15 @@ export async function loadS3IntoPinecone(fileKey: string) {
 
     // coming soon .... 
 
+}
+
+async function embedDocument(doc: Document) {
+    try {
+        const embeddings = await getEmbeddings(doc.pageContent)
+    } catch (error) {
+        console.log('error embedding document', error)
+        throw error
+    }
 }
 
 export const truncateStringByBytes = (str: string, bytes: number) => {
