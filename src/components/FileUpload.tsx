@@ -8,9 +8,11 @@ import { useMutation } from "@tanstack/react-query"
 import axios from 'axios';
 import toast from 'react-hot-toast/headless';
 
+import { useRouter } from 'next/navigation'
+
 // snippet -> tsrafce
 const FileUpload = () => {
-
+    const router = useRouter();
     const [uploading, setUploarding] = useState(false);
 
     const { mutate, isPending } = useMutation({
@@ -58,13 +60,14 @@ const FileUpload = () => {
                 }
 
                 mutate(data, {
-                    onSuccess: (data) => {
+                    onSuccess: ({ chat_id }) => {
                         console.log('onSuccess page data ::', data)
-                        // toast.success(data.message)
+                        toast.success("Chat created!")
+                        router.push(`/chat/${chat_id}`) // http://localhost:3000/chat/4
                     },
                     onError: (err) => {
                         toast.error("Error creating chat")
-
+                        console.log('err ::', err)
                     }
                 })
 
