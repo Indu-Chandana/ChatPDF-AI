@@ -21,6 +21,9 @@ export const chats = pgTable('chats', {
     fileKey: text('file_key').notNull() // retriving the file from AWS S3
 })
 
+// get the typeof chat
+export type DrizzleChat = typeof chats.$inferSelect;
+
 export const messages = pgTable("messages", {
     id: serial("id").primaryKey(),
     chatId: integer('chat_id').references(() => chats.id).notNull(),
