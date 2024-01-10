@@ -1,6 +1,8 @@
 // /chat/121h1323
 
+import ChatComponent from '@/components/ChatComponent';
 import ChatSideBar from '@/components/ChatSideBar';
+import PDFViewer from '@/components/PDFViewer';
 import { db } from '@/lib/db';
 import { chats } from '@/lib/db/schema';
 import { auth } from '@clerk/nextjs';
@@ -33,9 +35,12 @@ const ChatPage = async ({ params: { chatId } }: Props) => {
         return redirect("/")
     }
 
+    const currentChat = _chats.find(chat => chat.id === parseInt(chatId))
+
+    // console.log('currentChat ::', currentChat)
     return (
-        <div className='flex max-h-screen overflow-scroll'>
-            <div className='flex w-full max-h-screen overflow-scroll'>
+        <div className='flex max-h-screen overflow-scroll scrollbar-hide'>
+            <div className='flex w-full max-h-screen overflow-scroll scrollbar-hide'>
                 {/* chat sidebar */}
                 <div className='flex-[1] max-w-xs bg-slate-500'>
                     {/* <h1>hello</h1> */}
@@ -43,15 +48,15 @@ const ChatPage = async ({ params: { chatId } }: Props) => {
                 </div>
 
                 {/* pdf viewer */}
-                <div className=' max-h-screen p-4 overflow-scroll flex-[5] bg-stone-600'>
-                    <h1>hello 2</h1>
-                    {/* <PDFViewer/> */}
+                <div className=' max-h-screen p-4 overflow-scroll scrollbar-hide flex-[5] bg-stone-600'>
+
+                    <PDFViewer pdf_url={currentChat?.pdfUrl || ''} />
                 </div>
 
                 {/* chat component */}
                 <div className='flex-[3] border-l-4 border-l-slate-200'>
-                    <h1>hello 3</h1>
-                    {/* <ChatComponent/> */}
+
+                    <ChatComponent />
                 </div>
             </div>
         </div>
