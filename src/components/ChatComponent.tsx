@@ -10,8 +10,12 @@ import MessageList from './MessageList'
 type Props = {}
 
 const ChatComponent = (props: Props) => {
-    const { input, handleInputChange, handleSubmit, messages } = useChat();
+    const { input, handleInputChange, handleSubmit, messages } = useChat(); // This will handle the all the logic (send BE and get res, effects, etc.)
+    // whenever we hit enter It will send the message to our chatGPT endPoint and it will return us with the streaming output from chatGPT.
 
+    // press |handleSubmit| -> send current |messages| into our API (/api/chat)
+
+    // console.log('messages ::', messages)
     return (
         <div className=' relative max-h-screen overflow-scroll scrollbar-hide'>
             {/* header */}
