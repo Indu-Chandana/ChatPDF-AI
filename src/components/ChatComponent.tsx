@@ -13,9 +13,9 @@ const ChatComponent = (props: Props) => {
     const { input, handleInputChange, handleSubmit, messages } = useChat(); // This will handle the all the logic (send BE and get res, effects, etc.)
     // whenever we hit enter It will send the message to our chatGPT endPoint and it will return us with the streaming output from chatGPT.
 
-    // press |handleSubmit| -> send current |messages| into our API (/api/chat)
+    // press |handleSubmit| -> send current |messages| into our API (/api/chat) <- this is the default endPoint and we can change it if we want -> useChat({api: '/api/test'}); 
 
-    // console.log('messages ::', messages)
+
     return (
         <div className=' relative max-h-screen overflow-scroll scrollbar-hide'>
             {/* header */}
