@@ -56,7 +56,8 @@ const ChatPage = async ({ params: { chatId } }: Props) => {
                 {/* chat component */}
                 <div className='flex-[3] border-l-4 border-l-slate-200'>
 
-                    <ChatComponent />
+                    {/* chatId for get the filekey from the neon DB | filekey for get the namespace for  check the pdf vectors */}
+                    <ChatComponent chatId={parseInt(chatId)} />
                 </div>
             </div>
         </div>

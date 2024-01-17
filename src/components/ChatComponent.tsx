@@ -1,5 +1,5 @@
 'use client'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useChat } from 'ai/react' // use for streaming text UI
 
 import { Input } from './ui/input'
@@ -7,17 +7,32 @@ import { Send } from 'lucide-react'
 import { Button } from './ui/button'
 import MessageList from './MessageList'
 
-type Props = {}
+type Props = { chatId: number }
 
-const ChatComponent = (props: Props) => {
-    const { input, handleInputChange, handleSubmit, messages } = useChat(); // This will handle the all the logic (send BE and get res, effects, etc.)
+const ChatComponent = ({ chatId }: Props) => {
+    const { input, handleInputChange, handleSubmit, messages } = useChat({
+        api: "/api/chat",
+        body: { // additional objects that can be passed back to our backend
+            chatId
+        }
+    }); // This will handle the all the logic (send BE and get res, effects, etc.)
     // whenever we hit enter It will send the message to our chatGPT endPoint and it will return us with the streaming output from chatGPT.
 
     // press |handleSubmit| -> send current |messages| into our API (/api/chat) <- this is the default endPoint and we can change it if we want -> useChat({api: '/api/test'}); 
 
+    useEffect(() => { // this useEffect use for chat scroll effect.
+        const messageContainer = document.getElementById('message-container')
+        if (messageContainer) {
+            messageContainer.scrollTo({
+                top: messageContainer.scrollHeight,
+                behavior: "smooth"
+            })
+        }
+    }, [messages])
 
     return (
-        <div className=' relative max-h-screen overflow-scroll scrollbar-hide'>
+        // id='message-container' --> this use for chat scroll effect
+        <div className=' relative max-h-screen overflow-scroll scrollbar-hide' id='message-container'>
             {/* header */}
             <div className=' sticky top-0 inset-x-0 p-2 bg-white h-fit'>
                 <h3 className=' text-xl font-bold'>Chat</h3>
