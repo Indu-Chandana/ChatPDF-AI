@@ -1,20 +1,32 @@
 'use client'
 import React, { useEffect } from 'react'
 import { useChat } from 'ai/react' // use for streaming text UI
+import axios from 'axios'
+import { Message } from 'ai'
 
 import { Input } from './ui/input'
 import { Send } from 'lucide-react'
 import { Button } from './ui/button'
 import MessageList from './MessageList'
+import { useQuery } from '@tanstack/react-query'
 
 type Props = { chatId: number }
 
 const ChatComponent = ({ chatId }: Props) => {
+    const { data, isLoading } = useQuery({
+        queryKey: ["chat", chatId], // uniquely identify this query made to the backend
+        queryFn: async () => {
+            const response = await axios.post<Message[]>('/api/get-messages', { chatId })
+            return response.data
+        }
+    })
+
     const { input, handleInputChange, handleSubmit, messages } = useChat({
         api: "/api/chat",
         body: { // additional objects that can be passed back to our backend
             chatId
-        }
+        },
+        initialMessages: data || [],
     }); // This will handle the all the logic (send BE and get res, effects, etc.)
     // whenever we hit enter It will send the message to our chatGPT endPoint and it will return us with the streaming output from chatGPT.
 
@@ -39,7 +51,7 @@ const ChatComponent = ({ chatId }: Props) => {
             </div>
 
             {/* message list */}
-            <MessageList messages={messages} />
+            <MessageList messages={messages} isLoading={isLoading} />
 
             <form onSubmit={handleSubmit} className=' sticky bottom-0 inset-x-0 px-2 py-4 bg-white'>
                 <div className='flex'>
