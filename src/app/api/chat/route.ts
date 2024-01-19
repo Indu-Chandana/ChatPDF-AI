@@ -1,7 +1,7 @@
 import { Configuration, OpenAIApi } from 'openai-edge'
 import { Message, OpenAIStream, StreamingTextResponse } from 'ai'
 import { db } from '@/lib/db'
-import { chats } from '@/lib/db/schema'
+import { chats, messages as _messages } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
 import { NextResponse } from 'next/server'
 import { getContext } from '@/lib/context'
@@ -62,7 +62,24 @@ export async function POST(req: Request) {
         // res(bot) - Hello, How can I help you.
 
         // Ask OpenAI for a streaming chat completion given the prompt
-        const stream = OpenAIStream(response)
+        const stream = OpenAIStream(response, {
+            onStart: async () => {
+                // save user message into db
+                await db.insert(_messages).values({
+                    chatId,
+                    content: lastMessage.content,
+                    role: 'user'
+                })
+            },
+            onCompletion: async (completion) => {
+                // save ai message into db
+                await db.insert(_messages).values({
+                    chatId,
+                    content: completion,
+                    role: 'system'
+                })
+            }
+        })
         // Respond with the stream
 
         // I think - we are using |useChat()| for our form.  therefore we need to return back our res friendly with 'ai' library (vercel ai sdk)
