@@ -19,7 +19,7 @@ export async function GET() {
         }
 
         // check if there are subscriped to the pro /
-        // if there are sub -> there are trying to cancel the account
+        // if there are sub -> recurrent the package
         // if there are NOT sub -> That means there's no role within the DB - that means they are trying to sub
 
         const _userSubscriptions = await db.select().from(userSubscriptions).where(eq(userSubscriptions.userId, userId))
