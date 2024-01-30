@@ -1,8 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { UserButton, auth, useAuth } from "@clerk/nextjs";
 import Link from "next/dist/client/link";
-import { LogIn } from 'lucide-react'
+import { ArrowRight, LogIn } from 'lucide-react'
 import FileUpload from "@/components/FileUpload";
+import { checkSubscription } from "@/lib/subdcription";
+import SubscriptionButton from "@/components/SubscriptionButton";
+import { db } from "@/lib/db";
+import { chats } from "@/lib/db/schema";
+import { eq } from "drizzle-orm";
 
 export default async function Home() { //async will make sure that it's a server component.
   // This entire code block is going to run once on the server to generate the HTML code.
@@ -10,6 +15,17 @@ export default async function Home() { //async will make sure that it's a server
 
   const { userId, user, getToken, sessionId, } = await auth();
   const isAuth = !!userId; // Good practice null | string convert into boolean
+  const isPro = await checkSubscription() // we can check the subscription details in DB
+
+  // get the first created chat
+  let firstChat;
+  if (userId) {
+    firstChat = await db.select().from(chats).where(eq(chats.userId, userId))
+    if (firstChat) {
+      firstChat = firstChat[0]
+    }
+  }
+
   console.log('isAuth', isAuth, userId, user, getToken, sessionId,)
   return (
     <div className="w-screen min-h-screen bg-gradient-to-r from-rose-100 to-teal-100">
@@ -21,7 +37,12 @@ export default async function Home() { //async will make sure that it's a server
           </div>
 
           <div className="flex mt-2">
-            {isAuth && <Button>Go to Chats</Button>}
+            {isAuth && firstChat &&
+              <Link href={`/chat/${firstChat.id}`}>
+                <Button>Go to Chats <ArrowRight className="ml-2" /></Button>
+              </Link>
+            }
+            <div className="ml-3"><SubscriptionButton isPro={isPro} /></div>
           </div>
           <p className="max-w-xl mt-1 text-lg text-slate-600">Join millions of students, researchers and professionals to instantly answer questions and understand reasearch with AI</p>
 

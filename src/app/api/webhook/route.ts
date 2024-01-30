@@ -62,5 +62,6 @@ export async function POST(req: Request) { // This req made by stripe itself.
     }
 
     // status has to be 200, so that the webhook knows that it has finished its job.
+    // if doen't have status 200, stripe thinks something went wrong and keep sending messages to the endpoint.
     return new NextResponse(null, { status: 200 })
 }
