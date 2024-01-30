@@ -7,26 +7,29 @@ import { Button } from './ui/button'
 import { MessageCircle, PlusCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import axios from 'axios'
+import SubscriptionButton from './SubscriptionButton'
 
 type Props = {
     chats: DrizzleChat[],
-    chatId: number
+    chatId: number,
+    isPro: boolean
 }
 
-const ChatSideBar = ({ chatId, chats }: Props) => {
+const ChatSideBar = ({ chatId, chats, isPro }: Props) => {
     const [loading, setLoading] = useState(false)
 
-    const handleSubscription = async () => {
-        try {
-            setLoading(true)
-            const response = await axios.get('/api/stripe')
-            window.location.href = response.data.url // This gonna redirected to the stripe page.
-        } catch (error) {
-            console.log('catch error handleSubscription ::', error)
-        } finally {
-            setLoading(false)
-        }
-    }
+    // we use it for custom component
+    // const handleSubscription = async () => {
+    //     try {
+    //         setLoading(true)
+    //         const response = await axios.get('/api/stripe')
+    //         window.location.href = response.data.url // This gonna redirected to the stripe page.
+    //     } catch (error) {
+    //         console.log('catch error handleSubscription ::', error)
+    //     } finally {
+    //         setLoading(false)
+    //     }
+    // }
 
     return (
         <div className=' w-full h-screen p-4 text-gray-200 bg-gray-900'>
@@ -56,9 +59,10 @@ const ChatSideBar = ({ chatId, chats }: Props) => {
                 </div>
 
                 {/* Stripe Button */}
-                <Button className=' mt-2 text-white bg-slate-700' disabled={loading} onClick={handleSubscription}>
+                {/* <Button className=' mt-2 text-white bg-slate-700' disabled={loading} onClick={handleSubscription}>
                     Upgrade To Pro!
-                </Button>
+                </Button> */}
+                <SubscriptionButton isPro={isPro} />
             </div>
         </div>
     )
